@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Row, Container, Button, Col } from "react-bootstrap"
+import { Form, Row, Container, Button, Col, Spinner } from "react-bootstrap"
 import { Link } from 'react-router-dom';
 import { GrAddCircle } from 'react-icons/gr';
 
@@ -19,19 +19,40 @@ function SignIn() {
         if (file.size >= 1048576)
             return alert("Max file size is 1Mb")
         else {
+            //storing the image file to the state
             setImage(file);
+            //create a url for the file
             setImagePreview(URL.createObjectURL(file))
         }
     }
     async function uploadImage() {
         const data = new FormData();
         data.append("file", image);
-        data.append("upload_preset",)
+        // sending the image to my cloudinary account
+        data.append("upload_preset", "ckx65ctz")
+        try {
+            setUploadingImage(true);
+            //careleton-university is the name of my cloudinary account
+            let response = await fetch("https://api.cloudinary.com/v1_1/carelton-university/image/upload", {
+                method: "post",
+                body: data
+            })
+            const urlData = await response.json();
+            setUploadingImage(false);
+            return urlData.url;
+
+        }
+        catch (error) {
+            setUploadingImage(false);
+            console.log("error exists", error)
+        }
     }
-    function handleSignin(event) {
+    async function handleSignin(event) {
         event.preventDefault();
         if (!image) return alert("You have to upload a profile picture")
-        // const url = await uploadingImage(image);
+        const url = await uploadImage(image);
+        //sign the user in
+
     }
 
     return (
@@ -70,8 +91,12 @@ function SignIn() {
                             <Form.Label>Password</Form.Label>
                             <Form.Control type="password" placeholder="Password" value={password} onChange={event => setPassword(event.target.value)} />
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button variant="outline-primary" type="submit">
                             Sign in
+                            {
+                                uploadingImage && <Spinner animation="border" variant="success" size='sm' id="spinner" />
+                            }
+
                         </Button>
                         <div className="pv-4">
                             <p className="text-center">
