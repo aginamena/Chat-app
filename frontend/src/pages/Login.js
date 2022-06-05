@@ -2,14 +2,31 @@ import React, { useState } from 'react'
 import { Form, Row, Container, Button, Col } from "react-bootstrap"
 import { Link } from 'react-router-dom';
 import "../styles/Login.css";
+import { useNavigate } from "react-router-dom"
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [user, setUser] = useState(null)
+
+    const navigate = useNavigate();
+
 
     async function handleLogin(e) {
         e.preventDefault();
-        console.log(e);
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/login`, {
+            method: "post",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const user = await response.json();
+        //handle the case where the user isn't in the database
+        setUser(user);
+        navigate("/chat")
+
+
+
+
     }
     return (
         <Container>

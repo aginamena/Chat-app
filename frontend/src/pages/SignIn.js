@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Form, Row, Container, Button, Col, Spinner } from "react-bootstrap"
 import { Link } from 'react-router-dom';
 import { GrAddCircle } from 'react-icons/gr';
+import { useNavigate } from 'react-router-dom'
 
 import "../styles/SignIn.css";
+import UserContext from '../Context';
 
 function SignIn() {
     const [email, setEmail] = useState("");
@@ -12,6 +14,15 @@ function SignIn() {
     const [image, setImage] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
+
+    const navigate = useNavigate();
+
+    const {
+        setUserInfo,
+        setErrorPopup,
+        setIsUserValid
+    } = useContext(UserContext)
+
     function validateImage(event) {
 
         const file = event.target.files[0];
@@ -50,8 +61,21 @@ function SignIn() {
     async function handleSignin(event) {
         event.preventDefault();
         if (!image) return alert("You have to upload a profile picture")
-        const url = await uploadImage(image);
-        //sign the user in
+        const imageUrl = await uploadImage(image);
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/`, {
+            method: "post",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email, password, picture: imageUrl, name: userName })
+        });
+        const data = await response.json();
+        //clear the local storage before we put anything
+        localStorage.clear();
+        localStorage.setItem("user", JSON.stringify(data));
+        setUserInfo(data)
+        setIsUserValid(true)
+        setErrorPopup(false)
+        navigate("/")
+
 
     }
 
@@ -77,11 +101,11 @@ function SignIn() {
                         </div>
                         <Form.Group className="mb-3" controlId="formBasicName">
                             <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" placeholder="Your name" value={userName} onChange={event => setUserName(event.target.value)} />
+                            <Form.Control type="text" required placeholder="Your name" value={userName} onChange={event => setUserName(event.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" onChange={event => setEmail(event.target.value)}
+                            <Form.Control type="email" required placeholder="Enter email" onChange={event => setEmail(event.target.value)}
                                 value={email} />
                             <Form.Text className="text-muted">
                                 We'll never share your email with anyone else.
@@ -89,7 +113,7 @@ function SignIn() {
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" value={password} onChange={event => setPassword(event.target.value)} />
+                            <Form.Control type="password" required placeholder="Password" value={password} onChange={event => setPassword(event.target.value)} />
                         </Form.Group>
                         <Button variant="outline-primary" type="submit">
                             Sign in

@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Navbar, Container, NavDropdown, Nav } from "react-bootstrap"
 import { LinkContainer } from "react-router-bootstrap"
+import UserContext from '../Context'
+import "../styles/Navigation.css";
+
 function Navigation() {
+    const { userInfo } = useContext(UserContext)
+
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -11,19 +16,38 @@ function Navigation() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                        <LinkContainer to="/">
-                            <Nav.Link >Home</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/chat">
-                            <Nav.Link >Link</Nav.Link>
-                        </LinkContainer>
-                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                        </NavDropdown>
+                        {
+                            // if the user is not signed in, display the sigin in button
+                            userInfo ?
+                                <>
+                                    <LinkContainer to="/">
+                                        <Nav.Link >Home</Nav.Link>
+                                    </LinkContainer>
+                                    <LinkContainer to="/chat">
+                                        <Nav.Link>Chat</Nav.Link>
+                                    </LinkContainer>
+                                    <NavDropdown
+                                        id="nav-dropdown-dark-example"
+                                        title={<img src={userInfo.picture} alt="my picture" id="my-profile-pic" />}
+                                    >
+                                        <NavDropdown.Item href="#action/3.1">My Profile</NavDropdown.Item>
+                                        <NavDropdown.Item href="#action/3.2">Settings</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item href="#action/3.4">Log out</NavDropdown.Item>
+                                    </NavDropdown>
+                                </>
+
+                                :
+                                <>
+                                    <LinkContainer to="/login">
+                                        <Nav.Link >Log in</Nav.Link>
+                                    </LinkContainer>
+                                    <LinkContainer to="/signin">
+                                        <Nav.Link >Sign up</Nav.Link>
+                                    </LinkContainer>
+                                </>
+                        }
+
                     </Nav>
                 </Navbar.Collapse>
             </Container>
