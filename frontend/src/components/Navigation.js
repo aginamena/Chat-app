@@ -1,11 +1,14 @@
 import React, { useContext } from 'react'
-import { Navbar, Container, NavDropdown, Nav } from "react-bootstrap"
+import { Navbar, Container, NavDropdown, Nav, Button } from "react-bootstrap"
 import { LinkContainer } from "react-router-bootstrap"
 import UserContext from '../Context'
 import "../styles/Navigation.css";
 
 function Navigation() {
     const { userInfo } = useContext(UserContext)
+    function logout() {
+
+    }
 
     return (
         <Navbar bg="light" expand="lg">
@@ -33,7 +36,9 @@ function Navigation() {
                                         <NavDropdown.Item href="#action/3.1">My Profile</NavDropdown.Item>
                                         <NavDropdown.Item href="#action/3.2">Settings</NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item href="#action/3.4">Log out</NavDropdown.Item>
+                                        <NavDropdown.Item href="#action/3.4">
+                                            <Button variant="danger" onClick={logout}>Log out</Button>
+                                        </NavDropdown.Item>
                                     </NavDropdown>
                                 </>
 

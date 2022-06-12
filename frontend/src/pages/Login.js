@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Form, Row, Container, Button, Col } from "react-bootstrap"
 import { Link } from 'react-router-dom';
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom"
+import UserContext from '../Context';
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ function Login() {
 
     const navigate = useNavigate();
 
+    const { socket, setUserInfo, setErrorPopup, setIsUserValid, setMembers } = useContext(UserContext)
 
     async function handleLogin(e) {
         e.preventDefault();
@@ -22,11 +24,14 @@ function Login() {
         const user = await response.json();
         //handle the case where the user isn't in the database
         setUser(user);
-        navigate("/chat")
-
-
-
-
+        setUserInfo(user)
+        setIsUserValid(true)
+        setErrorPopup(false)
+        navigate("/")
+        // socket.emit("new-user");
+        // socket.on("new-user", allMembers => {
+        //     setMembers(allMembers)
+        // })
     }
     return (
         <Container>

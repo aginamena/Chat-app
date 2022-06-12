@@ -8,12 +8,17 @@ import SignIn from './pages/SignIn';
 import Home from './pages/Home';
 import Chat from './pages/Chat';
 import UserContext from './Context';
-
+import { socket } from './Context';
 
 function App() {
   const [userInfo, setUserInfo] = useState(null)
   const [ErrorPopup, setErrorPopup] = useState(false);
   const [isUserValid, setIsUserValid] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [currentRoom, setCurrentRoom] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [privateMemberMsg, setPrivateMemberMsg] = useState({});
+  const [newMessages, setNewMessages] = useState({});
 
   async function validateUser(user) {
     const email = user.email;
@@ -24,6 +29,7 @@ function App() {
 
   }
   useEffect(() => {
+    localStorage.clear();
     async function getUser() {
       const user = localStorage.getItem("user");
       if (user) {
@@ -46,7 +52,18 @@ function App() {
     ErrorPopup,
     setErrorPopup,
     isUserValid,
-    setIsUserValid
+    setIsUserValid,
+    rooms,
+    setRooms,
+    currentRoom,
+    setCurrentRoom,
+    members,
+    setMembers,
+    privateMemberMsg,
+    setPrivateMemberMsg,
+    newMessages,
+    setNewMessages,
+    socket
   }
   return (
     <BrowserRouter>

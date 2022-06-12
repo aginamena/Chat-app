@@ -20,7 +20,9 @@ function SignIn() {
     const {
         setUserInfo,
         setErrorPopup,
-        setIsUserValid
+        setIsUserValid,
+        setMembers,
+        socket
     } = useContext(UserContext)
 
     function validateImage(event) {
@@ -75,8 +77,10 @@ function SignIn() {
         setIsUserValid(true)
         setErrorPopup(false)
         navigate("/")
-
-
+        // socket.emit("new-user")
+        // socket.on("new-user", allMembers => {
+        //     setMembers(allMembers)
+        // })
     }
 
     return (
